@@ -23,7 +23,7 @@ typedef struct {
 	vertex* v;
 } graph;
 
-int createGraph(char** argv );
+int createGraph();
 int getNumAdjs(int vertNum);
 int* getAdjs(int vertNum);
 void printGraph();

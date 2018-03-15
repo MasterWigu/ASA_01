@@ -21,15 +21,13 @@ int linkDestination(link *l1) {
 
 graph graph1;
 
-int createGraph(char** argv ) {
+int createGraph(int* in) {
 	int i;
 	link* linkTemp;
 
-	int N; //num vertex
-	int M; //num links
-	sscanf(argv[i], "%d", &N);
-	sscanf(argv[i+1], "%d", &M);
-	
+	int N = in[0]; //num vertex
+	int M = in[1]; //num links
+
 	graph1.nVert = N;
 
 	graph1.v = (vertex*) malloc(sizeof(vertex)*N);
@@ -48,11 +46,9 @@ int createGraph(char** argv ) {
 		numTos[i]=0;
 	}
 
-	for (i=2; i<M+2; i+=2) {
-		sscanf(argv[i], "%d", &fromTemp);
-		sscanf(argv[i+1], "%d", &toTemp);
-		numFroms[fromTemp]++;
-		numTos[toTemp]++;
+	for (i=2; i<2*M+2; i+=2) {
+		numFroms[in[i]]++;
+		numTos[in[i+1]]++;
 	}
 
 	for (i=0; i<N; i++) {
@@ -60,9 +56,9 @@ int createGraph(char** argv ) {
 		graph1.v[i].tos = (int*) malloc(numTos[i]*sizeof(int));
 	}
 
-	for (i=2; i<M+2; i+=2) {
-		sscanf(argv[i], "%d", &fromTemp);
-		sscanf(argv[i+1], "%d", &toTemp);
+	for (i=2; i<2*M+2; i+=2) {
+		fromTemp = in[i];
+		toTemp = in[i+1];
 
 		graph1.v[fromTemp].tos[graph1.v[fromTemp].nTo] = toTemp;
 		graph1.v[toTemp].froms[graph1.v[toTemp].nFrom] = fromTemp;
