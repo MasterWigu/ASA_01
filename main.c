@@ -1,21 +1,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-
-typedef struct {
-	
-} ;
+#include "graph.h"
+#include "list.h"
 
 void tarjan() {
 	int visited = 0;
-
-
+	return;
 }
 
-int main(char* argv, int argc) {
-	
+int main(int argc, char** argv) {
+	printf("Entrou\n");
+	createGraph(argv);
 
-
+	printGraph();
+	printf("\n\nSaiu\n");
 	return 0;
 }
