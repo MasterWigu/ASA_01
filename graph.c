@@ -35,20 +35,21 @@ int createGraph(int* in) {
 	for (i=0; i<N; i++) {
 		graph1.v[i].nTo = 0;
 		graph1.v[i].nFrom = 0;
-		graph1.v[i].vNum = i+1;
+		graph1.v[i].vNum = i+1; //começamos no vertice 1
 	}
 
 	int fromTemp, toTemp;
-	int numFroms[N];
+	int numFroms[N]; 
 	int numTos[N];
+
 	for (i=0; i<N; i++) {
 		numFroms[i]=0;
 		numTos[i]=0;
 	}
 
 	for (i=2; i<2*M+2; i+=2) {
-		numFroms[in[i]]++;
-		numTos[in[i+1]]++;
+		numFroms[in[i+1]]++;  //No vetor in , em cada ligação ele incrementa o "to" da posição i e o "from" da posicao i+1 (ex: 1,4)
+		numTos[in[i]]++;
 	}
 
 	for (i=0; i<N; i++) {
@@ -60,10 +61,8 @@ int createGraph(int* in) {
 		fromTemp = in[i];
 		toTemp = in[i+1];
 
-		graph1.v[fromTemp].tos[graph1.v[fromTemp].nTo] = toTemp;
-		graph1.v[toTemp].froms[graph1.v[toTemp].nFrom] = fromTemp;
-		graph1.v[fromTemp].nTo++;
-		graph1.v[toTemp].nFrom++;
+		graph1.v[fromTemp].tos[graph1.v[fromTemp].nTo++] = toTemp; //vamos preenchendo as ligaçoes, sendo que os nTo e nFrom servem como referência para termos o índice certo
+		graph1.v[toTemp].froms[graph1.v[toTemp].nFrom++] = fromTemp;
 	}
 	return 0;
 }
@@ -72,7 +71,7 @@ int getNumAdjs(int vertNum) {
 	return graph1.v[vertNum-1].nTo;
 }
 
-int* getAdjs(int vertNum) {
+int* getAdjs(int vertNum) { //retorna a lista de vértices acessiveis a partir desse
 	return graph1.v[vertNum-1].tos;
 }
 

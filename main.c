@@ -17,7 +17,7 @@ int* lerFich() {
 	int *res;
 	scanf("%d", &M);
 	scanf("%d", &N);
-	res = (int*) malloc((2+N)*sizeof(int));
+	res = (int*) malloc((2+(2*N))*sizeof(int)); 
 	res[0] = M;
 	res[1] = N;
 
@@ -25,7 +25,7 @@ int* lerFich() {
 	for (i=2; i<(2*N)+2; i+=2) {
 		scanf("%d %d", &res[i], &res[i+1]);
 	}
-	return res;
+	return res; 
 }
 
 int main(int argc, char** argv) {

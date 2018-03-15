@@ -3,11 +3,11 @@
 
 #include "list.h"
 
-typedef struct {
+/*typedef struct {
 	int from;
 	int to;
 } link;
-
+*/
 
 typedef struct {
 	int nTo;
