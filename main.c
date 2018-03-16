@@ -34,9 +34,6 @@ int main(int argc, char** argv) {
 	int i;
 	nums = lerFich();
 	createGraph(nums);
-	printf("M=%d; N=%d\n", nums[0], nums[1]);
-	for (i=0; i<2*nums[1]; i++)
-		printf("%d\n", nums[i+2]);
 	
 	printGraph();
 	printf("\n\nSaiu\n");

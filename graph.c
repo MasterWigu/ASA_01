@@ -83,6 +83,7 @@ void printGraph() {
 		printf("Para:\n");
 		for (j=0; j<graph1.v[i].nTo; j++)
 			printf("%d\n", graph1.v[i].tos[j]);
+		printf("De:\n");
 		for (j=0; j<graph1.v[i].nFrom; j++)
 			printf("%d\n", graph1.v[i].froms[j]);
 	}
