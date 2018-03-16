@@ -3,39 +3,61 @@
 #include <string.h>
 #include "graph.h"
 #include "list.h"
+#include <math.h>
 
-/*pseudo-codigo do Tarjan - passar para C*/
+//#define min(a, b) a<b ? a: b
+#define inf -1
 
-/*s
+extern graph graph1;
+LLElem* L;
+
+void visit(int u, int *visited);
+
+int min(int a, int b) {
+	if (a==inf)
+		return b;
+	if (b==inf)
+		return a;
+	if (a<b)
+		return a;
+	return b;
+}
+
 void tarjan(graph G) {
 	int visited = 0;
-	visited = 0
-	L = 0/
-	for each vertex u ∈ V[G]
-	do d[u] = ∞
-	for each vertex u ∈ V[G]
-	do if d[u] = ∞
-	then Tarjan_Visit(u)}
+	int i;
+	for (i=0; i<getNumVer(); i++)//each vertex u ∈ V[G]
+		graph1.v[i].d = inf;      //∞ = -1 para simplificar
+	for (i=0; i<getNumVer(); i++)//each vertex u ∈ V[G]
+		if (graph1.v[i].d == inf)
+			visit(i, &visited);
+}
 
-*/
 
-/*
-Tarjan_Visit(u)
-	d[u] = low[u] = visited
-	visited = visited + 1
-	Push(L, u);
-	for each v ∈ Adj[u]
-	do if (d[v] = ∞ || v ∈ L)
-6 ✄ Ignora vértices de SCCs já identificados
-	then if d[v] = ∞
-	then Tarjan_Visit(v)
-	low[u] = min(low[u], low[v])
-	if d[u] = low[u] ✄ Raiz do SCC
-	then repeat
-	v = Pop(L)
-	✄ Vértices retirados definem SCC
-	until u = v
-*/
+
+
+void visit(int u, int *visited) {
+	int i, v;
+	graph1.v[u].d = *visited;
+	graph1.v[u].low = *visited;
+
+	*visited++;
+
+	push(L, u);
+	for (i=0; i<getNumVer(); i++)//each v ∈ Adj[u]
+		if (graph1.v[i].d == inf || graph1.v[i].inList > 0) //(d[v] = ∞ || v ∈ L)
+			// Ignora vértices de SCCs já identificados
+			if (graph1.v[i].d == inf) {
+				visit(i, visited);
+				graph1.v[u].low = min(graph1.v[u].low, graph1.v[i].low);
+			}
+	if (graph1.v[u].d == graph1.v[u].low) //d[u] = low[u] ✄ Raiz do SCC
+		do { //then repeat
+			v = pop(L);
+			//✄ Vértices retirados definem SCC
+		} while(v != u); //until u = v
+}
+
 
 int* lerFich() {
 	int M;

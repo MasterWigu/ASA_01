@@ -1,24 +1,23 @@
 #include <stdlib.h>
 #include "list.h"
 #include "graph.h"
-#include "list.h"
 
-int push(LLElem head, void* elem) {
-	LLElem new = (LLElem) malloc(sizeof(struct node)); 
-	new->elem = elem; 
+extern graph graph1;
+
+int push(LLElem *head, int vNum) {
+	graph1.v[vNum-1].inList++;
+	LLElem* new = (LLElem*) malloc(sizeof(LLElem)); 
+	new->vNum= vNum; 
 	new->next = head; 
 	return 0; 
 } 
 
-void* pop(LLElem head) {
-	void* elem = head->elem;
-	LLElem temp = head->next;
+int pop(LLElem *head) {
+	int vNum = head->vNum;
+	graph1.v[vNum-1].inList--;
+	LLElem *temp = head->next;
 	free(head);
 	head = temp;
-	return elem;
+	return vNum;
 }
- /*
-void freeList() {
-	return;
-}
-*/
+ 

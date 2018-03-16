@@ -5,12 +5,13 @@
 #include <stdio.h>
 #include "graph.h"
 
-typedef struct node { 
-	void *elem; 
-	struct node *next; 
-} *LLElem;
 
-int push(LLElem head, void* elem);
-void* pop(LLElem head);
+typedef struct node { 
+	int vNum;
+	struct node *next; 
+}LLElem;
+
+int push(LLElem *head, int vNum);
+int pop(LLElem *head);
 
 #endif

@@ -34,6 +34,7 @@ int createGraph(int* in) {
 		graph1.v[i].nTo = 0;
 		graph1.v[i].nFrom = 0;
 		graph1.v[i].vNum = i+1; //começamos no vertice 1
+		graph1.v[i].inList = 0;
 	}
 
 	int fromTemp, toTemp;
@@ -87,5 +88,8 @@ void printGraph() {
 		for (j=0; j<graph1.v[i].nFrom; j++)
 			printf("%d\n", graph1.v[i].froms[j]);
 	}
+}
 
+int getNumVer() {
+	return graph1.nVert;
 }
