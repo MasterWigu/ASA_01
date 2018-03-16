@@ -4,14 +4,15 @@
 #include "graph.h"
 #include "list.h"
 #include <math.h>
+#include <unistd.h>
 
 //#define min(a, b) a<b ? a: b
 #define inf -1
 
 extern graph graph1;
+int visited;
 
-
-void visit(int u, int *visited);
+void visit(int u);
 
 int min(int a, int b) {
 	if (a==inf)
@@ -24,31 +25,30 @@ int min(int a, int b) {
 }
 
 void tarjan() {
-	int visited = 0;
+	visited = 0;
 	int i;
 	for (i=0; i<getNumVer(); i++)//each vertex u ∈ V[G]
 		graph1.v[i].d = inf;      //∞ = -1 para simplificar
 	for (i=0; i<getNumVer(); i++)//each vertex u ∈ V[G]
 		if (graph1.v[i].d == inf)
-			visit(i, &visited);
+			visit(i);
 }
 
 
 
-void visit(int u, int *visited) {
+void visit(int u) {
 	int i, v;
-	graph1.v[u].d = *visited;
-	graph1.v[u].low = *visited;
+	graph1.v[u].d = visited;
+	graph1.v[u].low = visited;
 
-	*visited++;
+	visited++;
 
 	push(u);
-	printf("AAAA\n");
 	for (i=0; i<getNumVer(); i++)//each v ∈ Adj[u]
 		if (graph1.v[i].d == inf || graph1.v[i].inList > 0) //(d[v] = ∞ || v ∈ L)
 			// Ignora vértices de SCCs já identificados
 			if (graph1.v[i].d == inf) {
-				visit(i, visited);
+				visit(i);
 				graph1.v[u].low = min(graph1.v[u].low, graph1.v[i].low);
 			}
 	if (graph1.v[u].d == graph1.v[u].low) //d[u] = low[u] ✄ Raiz do SCC
@@ -80,14 +80,14 @@ int* lerFich() {
 }
 
 int main(int argc, char** argv) {
-	printf("Entrou\n");
 	int* nums;
 	int i;
 	nums = lerFich();
 	createGraph(nums);
+
+	printf("COMECA\n");
 	tarjan();
 
-	printGraph();
-	printf("\n\nSaiu\n");
+	//printGraph();
 	return 0;
 }

@@ -2,23 +2,6 @@
 #include "graph.h"
 #include "list.h"
 
-/*link* createLink(char* v1, char* v2) { //
-	link* new = (link*) malloc(sizeof(link));
-	sscanf(v1, "%d", &new->from);
-	sscanf(v2, "%d", &new->to);
-	return new;
-}
-
-int linkOrigin(link *l1) {
-	return l1->from;
-}
-
-int linkDestination(link *l1) {
-	return l1->to;
-}
-
-*/
-
 graph graph1;
 
 int createGraph(int* in) {

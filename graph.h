@@ -3,12 +3,6 @@
 
 #include "list.h"
 
-/*typedef struct {
-	int from;
-	int to;
-} link;
-*/
-
 typedef struct {
 	int vNum;
 	int d;
