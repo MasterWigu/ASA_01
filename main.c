@@ -9,7 +9,7 @@
 #define inf -1
 
 extern graph graph1;
-LLElem* L;
+
 
 void visit(int u, int *visited);
 
@@ -23,7 +23,7 @@ int min(int a, int b) {
 	return b;
 }
 
-void tarjan(graph G) {
+void tarjan() {
 	int visited = 0;
 	int i;
 	for (i=0; i<getNumVer(); i++)//each vertex u ∈ V[G]
@@ -35,7 +35,6 @@ void tarjan(graph G) {
 
 
 
-
 void visit(int u, int *visited) {
 	int i, v;
 	graph1.v[u].d = *visited;
@@ -43,7 +42,8 @@ void visit(int u, int *visited) {
 
 	*visited++;
 
-	push(L, u);
+	push(u);
+	printf("AAAA\n");
 	for (i=0; i<getNumVer(); i++)//each v ∈ Adj[u]
 		if (graph1.v[i].d == inf || graph1.v[i].inList > 0) //(d[v] = ∞ || v ∈ L)
 			// Ignora vértices de SCCs já identificados
@@ -52,8 +52,10 @@ void visit(int u, int *visited) {
 				graph1.v[u].low = min(graph1.v[u].low, graph1.v[i].low);
 			}
 	if (graph1.v[u].d == graph1.v[u].low) //d[u] = low[u] ✄ Raiz do SCC
+		printf("CCCC\n");
 		do { //then repeat
-			v = pop(L);
+			v = pop();
+			printf("%d\n", v);
 			//✄ Vértices retirados definem SCC
 		} while(v != u); //until u = v
 }
@@ -83,7 +85,8 @@ int main(int argc, char** argv) {
 	int i;
 	nums = lerFich();
 	createGraph(nums);
-	
+	tarjan();
+
 	printGraph();
 	printf("\n\nSaiu\n");
 	return 0;
