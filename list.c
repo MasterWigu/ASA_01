@@ -8,6 +8,8 @@ LLElem* L;
 void push(int vNum) {
 	graph1.v[vNum].inList++;
 	LLElem* new = (LLElem*) malloc(sizeof(LLElem)); 
+	if (new==NULL)
+		printf("Fodeu1\n");
 	new->vNum= vNum; 
 	new->next = L; 
 	L = new; 

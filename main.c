@@ -4,11 +4,14 @@
 #include "graph.h"
 #include "list.h"
 #include <math.h>
+#include <unistd.h>
 
 #define inf -1
 
 extern graph graph1;
+int visited;
 
+void visit(int u);
 
 void visit(int u);
 
@@ -81,10 +84,11 @@ int* lerFich() {
 }
 
 int main(int argc, char** argv) {
-	printf("Entrou\n");
 	int* nums;
 	nums = lerFich();
 	createGraph(nums);
+
+	printf("COMECA\n");
 	tarjan();
 	//printGraph();
 	printf("\n\nSaiu\n");
