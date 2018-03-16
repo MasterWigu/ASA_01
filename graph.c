@@ -23,8 +23,6 @@ graph graph1;
 
 int createGraph(int* in) {
 	int i;
-	link* linkTemp;
-
 	int N = in[0]; //num vertex
 	int M = in[1]; //num links
 
