@@ -59,8 +59,8 @@ int createGraph(int* in) {
 		fromTemp = in[i];
 		toTemp = in[i+1];
 
-		graph1.v[fromTemp].tos[graph1.v[fromTemp].nTo++] = toTemp; //vamos preenchendo as ligaçoes, sendo que os nTo e nFrom servem como referência para termos o índice certo
-		graph1.v[toTemp].froms[graph1.v[toTemp].nFrom++] = fromTemp;
+		graph1.v[fromTemp-1].tos[graph1.v[fromTemp-1].nTo++] = toTemp; //vamos preenchendo as ligaçoes, sendo que os nTo e nFrom servem como referência para termos o índice certo
+		graph1.v[toTemp-1].froms[graph1.v[toTemp-1].nFrom++] = fromTemp;
 	}
 	return 0;
 }
