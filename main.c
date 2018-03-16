@@ -4,11 +4,38 @@
 #include "graph.h"
 #include "list.h"
 
-void tarjan() {
-	int visited = 0;
-	return;
-}
+/*pseudo-codigo do Tarjan - passar para C*/
 
+/*s
+void tarjan(graph G) {
+	int visited = 0;
+	visited = 0
+	L = 0/
+	for each vertex u ∈ V[G]
+	do d[u] = ∞
+	for each vertex u ∈ V[G]
+	do if d[u] = ∞
+	then Tarjan_Visit(u)}
+
+*/
+
+/*
+Tarjan_Visit(u)
+	d[u] = low[u] = visited
+	visited = visited + 1
+	Push(L, u);
+	for each v ∈ Adj[u]
+	do if (d[v] = ∞ || v ∈ L)
+6 ✄ Ignora vértices de SCCs já identificados
+	then if d[v] = ∞
+	then Tarjan_Visit(v)
+	low[u] = min(low[u], low[v])
+	if d[u] = low[u] ✄ Raiz do SCC
+	then repeat
+	v = Pop(L)
+	✄ Vértices retirados definem SCC
+	until u = v
+*/
 
 int* lerFich() {
 	int M;
