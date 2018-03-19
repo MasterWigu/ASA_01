@@ -4,8 +4,8 @@
 #include "list.h"
 
 typedef struct {
-	//int vNum;
 	int d;
+	int root;
 	int low;
 	int nTo;
 	int nFrom;

@@ -61,6 +61,8 @@ void printGraph() {
 	int i, j;
 	for (i=0; i<graph1.nVert; i++) {
 		printf("\n\nVertice %d\n", i+1);
+		printf("Componente: %d\n", graph1.v[i].low);
+		printf("Raiz: %d\n", graph1.v[i].root+1);
 		printf("Tos: %d\n", graph1.v[i].nTo);
 		printf("Froms: %d\n", graph1.v[i].nFrom);
 		printf("Ligacoes:\n");

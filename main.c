@@ -4,12 +4,11 @@
 #include "graph.h"
 #include "list.h"
 #include <math.h>
-#include <unistd.h>
 
 #define inf -1
 
 extern graph graph1;
-int visited;
+int numComp;
 
 void visit(int u);
 
@@ -54,13 +53,35 @@ void visit(int u) {
 		}
 	}
 	if (graph1.v[u].d == graph1.v[u].low) { //d[u] = low[u] Raiz do SCC
-		printf("CCCC\n");
+		numComp++;
+		graph1.v[u].root = u;
 		do {
 			v = pop();
-			printf("%d\n", v+1);
+			graph1.v[v].root = u;
+			//printf("%d\n", v+1);
 			//Vértices retirados definem SCC
 		} while(v != u); //until u = v
 	}
+}
+
+void printAdjComp(int* adj) {
+	int N = adj[1];
+	int i;
+	int numLigComp = 0;
+
+	printf("%d\n", numComp);
+
+	for (i=2; i<(2*N)+2; i+=2) {
+		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
+			numLigComp++;
+	}
+	printf("%d\n", numLigComp);
+
+	for (i=2; i<(2*N)+2; i+=2) {
+		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
+			printf("%d %d\n", graph1.v[adj[i]].root+1, graph1.v[adj[i+1]].root+1);
+	}
+
 }
 
 
@@ -83,12 +104,14 @@ int* lerFich() {
 
 int main(int argc, char** argv) {
 	int* nums;
+	numComp = 0;
 	nums = lerFich();
 	createGraph(nums);
 
 	printf("COMECA\n");
 	tarjan();
-	//printGraph();
+	printAdjComp(nums);
+	printGraph();
 	printf("\n\nSaiu\n");
 	return 0;
 }
