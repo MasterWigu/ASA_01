@@ -5,13 +5,12 @@
 #include "list.h"
 #include <math.h>
 
-//#define min(a, b) a<b ? a: b
 #define inf -1
 
 extern graph graph1;
 
 
-void visit(int u, int *visited);
+void visit(int u);
 
 int min(int a, int b) {
 	if (a==inf)
@@ -24,40 +23,43 @@ int min(int a, int b) {
 }
 
 void tarjan() {
-	int visited = 0;
 	int i;
 	for (i=0; i<getNumVer(); i++)//each vertex u ∈ V[G]
 		graph1.v[i].d = inf;      //∞ = -1 para simplificar
 	for (i=0; i<getNumVer(); i++)//each vertex u ∈ V[G]
 		if (graph1.v[i].d == inf)
-			visit(i, &visited);
+			visit(i);
 }
 
 
 
-void visit(int u, int *visited) {
+void visit(int u) {
+	static int visited = 0;
 	int i, v;
-	graph1.v[u].d = *visited;
-	graph1.v[u].low = *visited;
+	graph1.v[u].d = visited;
+	graph1.v[u].low = visited;
 
-	*visited++;
+	visited++;
 
 	push(u);
-	printf("AAAA\n");
-	for (i=0; i<getNumVer(); i++)//each v ∈ Adj[u]
-		if (graph1.v[i].d == inf || graph1.v[i].inList > 0) //(d[v] = ∞ || v ∈ L)
+	//printf("AAAA %d\n", visited);
+	for (i=0; i<getNumAdjs(u); i++) {//each v ∈ Adj[u]
+		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList > 0) {//(d[v] = ∞ || v ∈ L)
 			// Ignora vértices de SCCs já identificados
-			if (graph1.v[i].d == inf) {
-				visit(i, visited);
-				graph1.v[u].low = min(graph1.v[u].low, graph1.v[i].low);
+			if (graph1.v[getAdjs(u)[i]].d == inf) {
+				visit(getAdjs(u)[i]);
 			}
-	if (graph1.v[u].d == graph1.v[u].low) //d[u] = low[u] ✄ Raiz do SCC
+			graph1.v[u].low = min(graph1.v[u].low, graph1.v[getAdjs(u)[i]].low);
+		}
+	}
+	if (graph1.v[u].d == graph1.v[u].low) { //d[u] = low[u] Raiz do SCC
 		printf("CCCC\n");
-		do { //then repeat
+		do {
 			v = pop();
-			printf("%d\n", v);
-			//✄ Vértices retirados definem SCC
+			printf("%d\n", v+1);
+			//Vértices retirados definem SCC
 		} while(v != u); //until u = v
+	}
 }
 
 
@@ -72,7 +74,6 @@ int* lerFich() {
 	res[0] = M;
 	res[1] = N;
 
-	int cont = 2;
 	for (i=2; i<(2*N)+2; i+=2) {
 		scanf("%d %d", &res[i], &res[i+1]);
 	}
@@ -82,12 +83,10 @@ int* lerFich() {
 int main(int argc, char** argv) {
 	printf("Entrou\n");
 	int* nums;
-	int i;
 	nums = lerFich();
 	createGraph(nums);
 	tarjan();
-
-	printGraph();
+	//printGraph();
 	printf("\n\nSaiu\n");
 	return 0;
 }
