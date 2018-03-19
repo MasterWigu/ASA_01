@@ -11,7 +11,7 @@ typedef struct node {
 	struct node *next; 
 }LLElem;
 
-void push(int vNum);
-int pop();
+void push(LLElem** head, int vNum);
+int pop(LLElem** head);
 
 #endif

@@ -3,24 +3,23 @@
 #include "graph.h"
 
 extern graph graph1;
-LLElem* L;
 
-void push(int vNum) {
+void push(LLElem **head, int vNum) {
 	graph1.v[vNum].inList++;
 	LLElem* new = (LLElem*) malloc(sizeof(LLElem)); 
 	if (new==NULL)
 		printf("Fodeu1\n");
 	new->vNum= vNum; 
-	new->next = L; 
-	L = new; 
+	new->next = *head; 
+	*head = new; 
 } 
 
-int pop() {
-	int vNum = L->vNum;
+int pop(LLElem **head) {
+	int vNum = (*head)->vNum;
 	graph1.v[vNum].inList--;
-	LLElem *temp = L->next;
-	free(L);
-	L = temp;
+	LLElem *temp = (*head)->next;
+	free(*head);
+	*head = temp;
 	return vNum;
 }
  

@@ -5,7 +5,7 @@
 
 typedef struct {
 	int d;
-	int root;
+	int numSCC;
 	int low;
 	int nTo;
 	int nFrom;

@@ -9,6 +9,8 @@
 
 extern graph graph1;
 int numComp;
+LLElem* SCC;
+LLElem* L;
 
 void visit(int u);
 
@@ -35,13 +37,13 @@ void tarjan() {
 
 void visit(int u) {
 	static int visited = 0;
-	int i, v;
+	int i, v, smallest;
 	graph1.v[u].d = visited;
 	graph1.v[u].low = visited;
 
 	visited++;
 
-	push(u);
+	push(&L, u);
 	//printf("AAAA %d\n", visited);
 	for (i=0; i<getNumAdjs(u); i++) {//each v ∈ Adj[u]
 		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList > 0) {//(d[v] = ∞ || v ∈ L)
@@ -54,13 +56,19 @@ void visit(int u) {
 	}
 	if (graph1.v[u].d == graph1.v[u].low) { //d[u] = low[u] Raiz do SCC
 		numComp++;
-		graph1.v[u].root = u;
+		//graph1.v[u].root = u;
+		smallest = u;
+		graph1.v[u].numSCC = numComp-1;
 		do {
-			v = pop();
-			graph1.v[v].root = u;
+			v = pop(&L);
+			if (v < smallest)
+				smallest = v;
+			graph1.v[v].numSCC = numComp-1;
+			//graph1.v[v].root = u;
 			//printf("%d\n", v+1);
 			//Vértices retirados definem SCC
 		} while(v != u); //until u = v
+		push(&SCC, smallest);
 	}
 }
 
@@ -71,6 +79,11 @@ void printAdjComp(int* adj) {
 
 	printf("%d\n", numComp);
 
+	int comps[numComp];
+	for (i=numComp-1; i>=0; i--) {
+		comps[i] = pop(&SCC);
+	}
+
 	for (i=2; i<(2*N)+2; i+=2) {
 		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
 			numLigComp++;
@@ -79,7 +92,7 @@ void printAdjComp(int* adj) {
 
 	for (i=2; i<(2*N)+2; i+=2) {
 		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
-			printf("%d %d\n", graph1.v[adj[i]].root+1, graph1.v[adj[i+1]].root+1);
+			printf("%d %d\n", comps[graph1.v[adj[i]].numSCC], comps[graph1.v[adj[i+1]].numSCC]);
 	}
 
 }
