@@ -13,8 +13,6 @@ int visited;
 
 void visit(int u);
 
-void visit(int u);
-
 int min(int a, int b) {
 	if (a==inf)
 		return b;
