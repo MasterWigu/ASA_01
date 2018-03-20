@@ -75,6 +75,7 @@ void visit(int u) {
 void printAdjComp(int* adj) {
 	int N = adj[1];
 	int i;
+	int in=0;
 	int numLigComp = 0;
 
 	printf("%d\n", numComp);
@@ -89,12 +90,24 @@ void printAdjComp(int* adj) {
 		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
 			numLigComp++;
 	}
-	printf("%d\n", numLigComp);
 
+	int comps2[numLigComp];
 	for (i=2; i<(2*N)+2; i+=2) {
-		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
-			printf("%d %d\n", comps[graph1.v[adj[i]-1].numSCC]+1, comps[graph1.v[adj[i+1]-1].numSCC]+1);
+		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low) {
+			if (in==0 || 
+				comps2[in-2] != comps[graph1.v[adj[i]-1].numSCC]+1 || 
+				comps2[in-1] != comps[graph1.v[adj[i+1]-1].numSCC]+1) {
+
+				comps2[in++] = comps[graph1.v[adj[i]-1].numSCC]+1;
+				comps2[in++] = comps[graph1.v[adj[i+1]-1].numSCC]+1;
+			}
+		}
 	}
+
+
+	printf("%d\n", in/2);
+	for (i=0; i<in; i+=2)
+		printf("%d %d\n", comps2[i], comps2[i+1]);
 
 }
 
@@ -122,10 +135,8 @@ int main(int argc, char** argv) {
 	nums = lerFich();
 	createGraph(nums);
 
-	printf("COMECA\n");
 	tarjan();
 	printAdjComp(nums);
 	//printGraph();
-	printf("\n\nSaiu\n");
 	return 0;
 }
