@@ -11,9 +11,19 @@ extern graph graph1;
 int numComp;
 LLElem* SCC;
 LLElem* L;
-int *aux; 
+int *aux2; 
 
 void visit(int u);
+
+int adjMenor(int* a, int i, int j) {
+	if (a[i] < a[j])
+		return 1;
+	if (a[i] > a[j])
+		return 0;
+	if (a[i+1] < a[j+1])
+		return 1;
+	return 0;
+}
 
 int min(int a, int b) {
 	if (a==inf)
@@ -25,26 +35,26 @@ int min(int a, int b) {
 	return b;
 }
 
-void merge(int *a, int l, int m, int r) {  
+void merge(int *a, int l, int m, int r, int* adj) {  
 	int i, j, k; 
 	for (i = m+1; i > l; i--)  
-    	aux[i-1] = a[i-1]; 
+    	aux2[i-1] = a[i-1]; 
 	for (j = m; j < r; j++) 
-    	aux[r+m-j] = a[j+1]; 
+    	aux2[r+m-j] = a[j+1]; 
   	for (k = l; k <= r; k++) 
-    	if (min(aux[j], aux[i])) 
-      		a[k] = aux[j--]; 
+    	if (adjMenor(adj,aux2[j], aux2[i])) 
+      		a[k] = aux2[j--]; 
     	else 
-      		a[k] = aux[i++]; 
+      		a[k] = aux2[i++]; 
 }
 
-void mergesort(int *a, int l, int r) {  
+void mergesort(int *a, int l, int r, int* adj) {  
 	int m = (r+l)/2;
 	if (r <= l) 
 		return; 
 	mergesort(a, l, m); 
 	mergesort(a, m+1, r); 
-	merge(a, l, m, r); 
+	merge(a, l, m, r, adj); 
 }
 
 void tarjan() {
@@ -109,9 +119,14 @@ void printAdjComp(int* adj) {
 		//printf("AA %d\n", comps[i]);
 	}
 
+
+	int aux[N];
+	for (i=0; i<N; i++)
+		aux[i]=i;
 	//ordenar adj
-	aux = (int*) malloc((N+2)*sizeof(int));
-	//mergesort(adj, 2, 2*N+2);
+
+	aux2 = (int*) malloc(N*sizeof(int));
+	mergesort(aux, 0, N, adj+2);
 
 	for (i=2; i<(2*N)+2; i+=2) {
 		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
