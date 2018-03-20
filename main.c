@@ -43,7 +43,7 @@ void visit(int u) {
 
 	visited++;
 
-	push(&L, u);
+	push(&L, u, 1);
 	//printf("AAAA %d\n", visited);
 	for (i=0; i<getNumAdjs(u); i++) {//each v ∈ Adj[u]
 		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList > 0) {//(d[v] = ∞ || v ∈ L)
@@ -55,20 +55,20 @@ void visit(int u) {
 		}
 	}
 	if (graph1.v[u].d == graph1.v[u].low) { //d[u] = low[u] Raiz do SCC
-		numComp++;
 		//graph1.v[u].root = u;
 		smallest = u;
-		graph1.v[u].numSCC = numComp-1;
+		graph1.v[u].numSCC = numComp;
 		do {
-			v = pop(&L);
+			v = pop(&L, 1);
 			if (v < smallest)
 				smallest = v;
-			graph1.v[v].numSCC = numComp-1;
+			graph1.v[v].numSCC = numComp;
 			//graph1.v[v].root = u;
 			//printf("%d\n", v+1);
 			//Vértices retirados definem SCC
 		} while(v != u); //until u = v
-		push(&SCC, smallest);
+		push(&SCC, smallest, 0);
+		numComp++;
 	}
 }
 
@@ -81,7 +81,8 @@ void printAdjComp(int* adj) {
 
 	int comps[numComp];
 	for (i=numComp-1; i>=0; i--) {
-		comps[i] = pop(&SCC);
+		comps[i] = pop(&SCC, 0);
+		//printf("AA %d\n", comps[i]);
 	}
 
 	for (i=2; i<(2*N)+2; i+=2) {
@@ -92,7 +93,7 @@ void printAdjComp(int* adj) {
 
 	for (i=2; i<(2*N)+2; i+=2) {
 		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
-			printf("%d %d\n", comps[graph1.v[adj[i]].numSCC], comps[graph1.v[adj[i+1]].numSCC]);
+			printf("%d %d\n", comps[graph1.v[adj[i]-1].numSCC]+1, comps[graph1.v[adj[i+1]-1].numSCC]+1);
 	}
 
 }
@@ -124,7 +125,7 @@ int main(int argc, char** argv) {
 	printf("COMECA\n");
 	tarjan();
 	printAdjComp(nums);
-	printGraph();
+	//printGraph();
 	printf("\n\nSaiu\n");
 	return 0;
 }

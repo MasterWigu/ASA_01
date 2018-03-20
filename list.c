@@ -4,8 +4,8 @@
 
 extern graph graph1;
 
-void push(LLElem **head, int vNum) {
-	graph1.v[vNum].inList++;
+void push(LLElem **head, int vNum, int L) {
+	if(L) graph1.v[vNum].inList++;
 	LLElem* new = (LLElem*) malloc(sizeof(LLElem)); 
 	if (new==NULL)
 		printf("Fodeu1\n");
@@ -14,9 +14,9 @@ void push(LLElem **head, int vNum) {
 	*head = new; 
 } 
 
-int pop(LLElem **head) {
+int pop(LLElem **head, int L) {
 	int vNum = (*head)->vNum;
-	graph1.v[vNum].inList--;
+	if(L) graph1.v[vNum].inList--;
 	LLElem *temp = (*head)->next;
 	free(*head);
 	*head = temp;
