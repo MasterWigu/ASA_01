@@ -11,6 +11,7 @@ extern graph graph1;
 int numComp;
 LLElem* SCC;
 LLElem* L;
+int *aux; 
 
 void visit(int u);
 
@@ -22,6 +23,28 @@ int min(int a, int b) {
 	if (a<b)
 		return a;
 	return b;
+}
+
+void merge(int *a, int l, int m, int r) {  
+	int i, j, k; 
+	for (i = m+1; i > l; i--)  
+    	aux[i-1] = a[i-1]; 
+	for (j = m; j < r; j++) 
+    	aux[r+m-j] = a[j+1]; 
+  	for (k = l; k <= r; k++) 
+    	if (min(aux[j], aux[i])) 
+      		a[k] = aux[j--]; 
+    	else 
+      		a[k] = aux[i++]; 
+}
+
+void mergesort(int *a, int l, int r) {  
+	int m = (r+l)/2;
+	if (r <= l) 
+		return; 
+	mergesort(a, l, m); 
+	mergesort(a, m+1, r); 
+	merge(a, l, m, r); 
 }
 
 void tarjan() {
@@ -86,20 +109,27 @@ void printAdjComp(int* adj) {
 		//printf("AA %d\n", comps[i]);
 	}
 
+	//ordenar adj
+	aux = (int*) malloc((N+2)*sizeof(int));
+	//mergesort(adj, 2, 2*N+2);
+
 	for (i=2; i<(2*N)+2; i+=2) {
 		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
 			numLigComp++;
 	}
 
-	int comps2[numLigComp];
+	int comps2[2*numLigComp];
 	for (i=2; i<(2*N)+2; i+=2) {
 		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low) {
 			if (in==0 || 
 				comps2[in-2] != comps[graph1.v[adj[i]-1].numSCC]+1 || 
 				comps2[in-1] != comps[graph1.v[adj[i+1]-1].numSCC]+1) {
+				//printf("A I=%d  IN=%d  ADJ=%d  ADJ2=%d\n", i, in, adj[i], adj[i+1]);
 
-				comps2[in++] = comps[graph1.v[adj[i]-1].numSCC]+1;
-				comps2[in++] = comps[graph1.v[adj[i+1]-1].numSCC]+1;
+				comps2[in] = comps[graph1.v[adj[i]-1].numSCC]+1;
+				comps2[in+1] = comps[graph1.v[adj[i+1]-1].numSCC]+1;
+				//printf("B I=%d  IN=%d  ADJ=%d  ADJ2=%d\n", i, in, adj[i], adj[i+1]);
+				in+=2;
 			}
 		}
 	}
