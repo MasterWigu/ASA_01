@@ -11,16 +11,16 @@ extern graph graph1;
 int numComp;
 LLElem* SCC;
 LLElem* L;
-int *adj;
+int *comps2;
 
 void visit(int u);
 
 int adjMenor(int i, int j) {
-	if (adj[2*i] < adj[2*j])
+	if (comps2[2*i] < comps2[2*j])
 		return 1;
-	if (adj[2*i] > adj[2*j])
+	if (comps2[2*i] > comps2[2*j])
 		return 0;
-	if (adj[2*i+1] <= adj[2*j+1])
+	if (comps2[2*i+1] <= comps2[2*j+1])
 		return 1;
 	return 0;
 }
@@ -149,7 +149,7 @@ void visit(int u) {
 	}
 }
 
-void printAdjComp() {
+void printAdjComp(int* adj) {
 	int N = adj[1];
 	int i;
 	int in=0;
@@ -162,26 +162,24 @@ void printAdjComp() {
 		comps[i] = pop(&SCC, 0);
 		//printf("AA %d\n", comps[i]);
 	}
-
-
-	int ind[N];
-	for (i=0; i<N; i++)
-		ind[i]=i+1;
-
-
-	mergeSort(ind, 0, N-1);
 /*
 	printf("\n");
 	for (i=0; i<N; i++)
 		printf("%d ", ind[i]);
 	printf("\n");
 */
+	/*
 	for (i=0; i<N; i++) {
 		if (graph1.v[adj[2*ind[i]]-1].low != graph1.v[adj[2*ind[i]+1]-1].low)
 			numLigComp++;
-	}
+	}*/
+ 	for (i=2; i<(2*N)+2; i+=2) {
+    	if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
+      		numLigComp++;
+  	}
 
-	int comps2[2*numLigComp];
+	comps2 = (int*) malloc((2*numLigComp)*sizeof(int));
+	/*
 	for (i=0; i<N; i++) {
 		if (graph1.v[adj[2*ind[i]]-1].low != graph1.v[adj[2*ind[i]+1]-1].low) {
 			if (in==0 || 
@@ -195,12 +193,52 @@ void printAdjComp() {
 				in+=2;
 			}
 		}
+	}*/
+	for (i=2; i<(2*N)+2; i+=2) {
+		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low) { 
+    		if (in==0 ||  
+        		comps2[in-2] != comps[graph1.v[adj[i]-1].numSCC]+1 ||  
+        		comps2[in-1] != comps[graph1.v[adj[i+1]-1].numSCC]+1) { 
+ 
+	        	comps2[in] = comps[graph1.v[adj[i]-1].numSCC]+1; 
+    	    	comps2[in+1] = comps[graph1.v[adj[i+1]-1].numSCC]+1; 
+    	    	in+=2;
+      		} 
+    	} 
 	}
 
+	int ind[in/2];
+	for (i=0; i<in/2; i++)
+		ind[i]=i;
 
-	printf("%d\n", in/2);
-	for (i=0; i<in; i+=2)
-		printf("%d %d\n", comps2[i], comps2[i+1]);
+
+	mergeSort(ind, 0, (in/2)-1);
+
+	int comps3[in];
+	int in2 = 0;
+
+/*
+	for (i=0; i<in/2; i++)
+		printf("B=%d\n", ind[i]);
+	for(i=0; i<in; i+=2)
+		printf("AAA %d %d\n", comps2[i], comps2[i+1]);
+*/
+	for (i=0; i<in/2; i++) {
+    	if (i==0 || comps3[in2-2] != comps2[2*ind[i]]
+    		  || comps3[in2-1] != comps2[2*ind[i]+1] ) {
+
+
+    		comps3[in2] = comps2[2*ind[i]];
+    		comps3[in2+1] = comps2[2*ind[i]+1];
+    		//printf("A= %d\n",comps2[2*ind[i]]);
+    		//printf("A= %d\n",comps2[2*ind[i]]+1);
+    		in2+=2;
+    	} 
+	}
+
+	printf("%d\n", in2/2);
+	for (i=0; i<in2; i+=2)
+		printf("%d %d\n", comps3[i], comps3[i+1]);
 
 }
 
@@ -223,12 +261,13 @@ int* lerFich() {
 }
 
 int main(int argc, char** argv) {
+	int* adj;
 	numComp = 0;
 	adj = lerFich();
 	createGraph(adj);
 
 	tarjan();
-	printAdjComp();
+	printAdjComp(adj);
 	//printGraph();
 	return 0;
 }
