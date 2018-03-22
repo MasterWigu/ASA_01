@@ -6,6 +6,7 @@
 #include <math.h>
 
 #define inf -1
+#define min(a,b) (( (a)<(b) ) ? (a) : (b))
 
 extern graph graph1;
 int numComp;
@@ -25,7 +26,7 @@ int adjMenor(int i, int j) {
 	return 0;
 }
 
-int min(int a, int b) {
+/*int min(int a, int b) {
 	if (a==inf)
 		return b;
 	if (b==inf)
@@ -33,7 +34,7 @@ int min(int a, int b) {
 	if (a<b)
 		return a;
 	return b;
-}
+}*/
 
 
 // Merges two subarrays of arr[].
@@ -114,7 +115,7 @@ void tarjan() {
 
 void visit(int u) {
 	static int visited = 0;
-	int i, v, smallest;
+	int i, w;
 	graph1.v[u].d = visited;
 	graph1.v[u].low = visited;
 
@@ -123,7 +124,7 @@ void visit(int u) {
 	push(&L, u, 1);
 	//printf("AAAA %d\n", visited);
 	for (i=0; i<getNumAdjs(u); i++) {//each v ∈ Adj[u]
-		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList > 0) {//(d[v] = ∞ || v ∈ L)
+		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList == 1) {//(d[v] = ∞ || v ∈ L)
 			// Ignora vértices de SCCs já identificados
 			if (graph1.v[getAdjs(u)[i]].d == inf) {
 				visit(getAdjs(u)[i]);
@@ -131,19 +132,19 @@ void visit(int u) {
 			graph1.v[u].low = min(graph1.v[u].low, graph1.v[getAdjs(u)[i]].low);
 		}
 	}
+	int smallest = u;
 	if (graph1.v[u].d == graph1.v[u].low) { //d[u] = low[u] Raiz do SCC
 		//graph1.v[u].root = u;
-		smallest = u;
 		graph1.v[u].numSCC = numComp;
 		do {
-			v = pop(&L, 1);
-			if (v < smallest)
-				smallest = v;
-			graph1.v[v].numSCC = numComp;
+			w = pop(&L, 1);
+			if (w < smallest)
+				smallest = w;
+			graph1.v[w].numSCC = numComp;
 			//graph1.v[v].root = u;
 			//printf("%d\n", v+1);
 			//Vértices retirados definem SCC
-		} while(v != u); //until u = v
+		} while(w != u); //until u = v
 		push(&SCC, smallest, 0);
 		numComp++;
 	}
