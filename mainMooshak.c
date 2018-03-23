@@ -9,6 +9,14 @@
 #define min(a,b) (( (a)<(b) ) ? (a) : (b))
 
 
+
+/*PROJECTO ASA 2017/2018
+	GRUPO 26 - LEIC-T
+Catarina Pedreira n.87524
+Miguel Oliveira n.87689
+*/
+
+
 /*list*/
 
 typedef struct node { 
@@ -41,17 +49,6 @@ LLElem* L;
 
 int numComp;
 int *comps2;
-int arch;
-
-
-typedef struct {
-	int orig;
-	int dest;
-} merda;
-
-int contMerda;
-int contMerda2;
-merda caralhinho[1000000];
 
 /*list functions*/
 
@@ -71,7 +68,6 @@ int pop(LLElem **head, int L) {
 	int vNum = (*head)->vNum;
 	if(L) graph1.v[vNum].inList = False;
 	LLElem *temp = (*head)->next;
-	/*free(*head);*/
 	*head = temp;
 	return vNum;
 }
@@ -194,27 +190,6 @@ void merge(int arr[], int l, int m, int r) {
     }
 }
  
-
-void addmerda(int org, int dest) {
-	int i = 0;
-	int a=0, b=0;
-	for (i=0; i < contMerda; i++) {
-		if (caralhinho[i].orig == org)
-			b=1;
-		if (caralhinho[i].orig == org && caralhinho[i].dest == dest){
-			a=1;
-			break;
-		}
-	}
-	if(a==0) {
-		caralhinho[contMerda].orig = org;
-		caralhinho[contMerda].dest = dest;
-		contMerda++;
-	}
-	if (b==0)
-		contMerda2++;
-}
-
 void mergeSort(int arr[], int l, int r) {
     if (l < r) {
         int m = l+(r-l)/2;
@@ -236,7 +211,6 @@ void visit(int u) {
 
 	for (i=0; i<getNumAdjs(u); i++) { /*each v in Adj[u]*/
 		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList == True) {/*(d[v] = inf || v in L)*/
-			/* Ignora vertices de SCCs ja identificados*/
 			if (graph1.v[getAdjs(u)[i]].d == inf) {
 				visit(getAdjs(u)[i]);
 			}
@@ -251,7 +225,7 @@ void visit(int u) {
 			if (v < smallest)
 				smallest = v;
 			graph1.v[v].numSCC = numComp;
-			/*Vertices retirados definem SCC*/
+
 		} while(v != u); /*until u = v*/
 
 		push(&SCC, smallest, False);
@@ -374,20 +348,13 @@ int* lerFich() {
  
 
 int main(int argc, char** argv) {
-	contMerda =0;
-	contMerda2 = 0;
-	arch = 0;
-	/*int i;*/
 	int* adj;
 	L = NULL;
 	SCC = NULL;
 	numComp = 0;
+
 	adj = lerFich();
 	createGraph(adj);
-
-	/*for (i=0; i<adj[0]; i++)
-		printf("%d\n", graph1.v[i].nTo);*/
-
 	tarjan();
 	printAdjComp(adj);
 
