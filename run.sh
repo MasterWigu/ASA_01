@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #gcc -o bla *.c -ggdb -Wall
-gcc -O3 -ansi -Wall *.c -lm
+gcc -o bla -O3 -ansi -Wall *.c -lm
 
 for arg in "$@"
 do
