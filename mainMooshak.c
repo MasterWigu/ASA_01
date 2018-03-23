@@ -3,6 +3,8 @@
 #include <string.h>
 
 #define inf -1
+#define True 1
+#define False 0
 
 #define min(a,b) (( (a)<(b) ) ? (a) : (b))
 
@@ -20,11 +22,9 @@ typedef struct {
 	int d;
 	int numSCC;
 	int low;
-	int nTo;
-	int nFrom;
 	int inList; /*1 se estiver no stack, 0 se nao*/
+	int nTo;
 	int* tos;
-	int* froms;
 } vertex;
 
 
@@ -35,10 +35,11 @@ typedef struct {
 
 graph graph1;
 
-int numComp;
+
 LLElem* SCC;
 LLElem* L;
 
+int numComp;
 int *comps2;
 int arch;
 
@@ -55,7 +56,7 @@ merda caralhinho[1000000];
 /*list functions*/
 
 void push(LLElem **head, int vNum, int L) {
-	if(L) graph1.v[vNum].inList++;
+	if(L) graph1.v[vNum].inList = True;
 	LLElem* new = (LLElem*) malloc(sizeof(LLElem)); 
 	if (new==NULL) {
 		printf("Erro malloc pilha\n");
@@ -68,9 +69,9 @@ void push(LLElem **head, int vNum, int L) {
 
 int pop(LLElem **head, int L) {
 	int vNum = (*head)->vNum;
-	if(L) graph1.v[vNum].inList--;
+	if(L) graph1.v[vNum].inList = False;
 	LLElem *temp = (*head)->next;
-	free(*head);
+	/*free(*head);*/
 	*head = temp;
 	return vNum;
 }
@@ -97,41 +98,42 @@ int createGraph(int* in) {
 	graph1.nVert = N;
 
 	graph1.v = (vertex*)malloc(sizeof(vertex)*N);
+	if (graph1.v == NULL) {
+		printf("ERRO malloc 1 graph\n");
+		exit(1);
+	}
 
 	for (i=0; i<N; i++) {
 		graph1.v[i].nTo = 0;
-		graph1.v[i].nFrom = 0;
 		graph1.v[i].inList = 0;
 		graph1.v[i].low = inf;
+		graph1.v[i].d = inf;
+		graph1.v[i].numSCC = inf;
 	}
 
-	int fromTemp, toTemp;
-	int numFroms[N]; 
 	int numTos[N];
 
 	for (i=0; i<N; i++) {
-		numFroms[i]=0;
 		numTos[i]=0;
 	}
 
 	for (i=2; i<2*M+2; i+=2) {
-		numFroms[in[i+1]]++;  /*No vetor in , em cada ligacao ele incrementa o "to" da posicao i e o "from" da posicao i+1 (ex: 1,4)*/
 		numTos[in[i]]++;
+		
 	}
 
 	for (i=0; i<N; i++) {
-		graph1.v[i].froms = (int*) malloc(numFroms[i]*sizeof(int));
 		graph1.v[i].tos = (int*) malloc(numTos[i]*sizeof(int));
+		if (graph1.v[i].tos == NULL) {
+			printf("ERRO malloc 2 graph\n");
+			exit(1);
+		}
 	}
 
 
 	for (i=2; i<(2*M)+2; i+=2) {
-		fromTemp = in[i];
-		toTemp = in[i+1];
-
-		graph1.v[fromTemp-1].tos[graph1.v[fromTemp-1].nTo++] = toTemp-1; /*vamos preenchendo as ligacoes, sendo que os nTo e nFrom servem como referencia para termos o indice certo*/
-		//printf("%d %d\n", i-1 , toTemp-1);
-		graph1.v[toTemp-1].froms[graph1.v[toTemp-1].nFrom++] = fromTemp-1;
+		graph1.v[in[i]].tos[graph1.v[in[i]].nTo] = in[i+1];
+		graph1.v[in[i]].nTo++;
 	}
 	return 0;
 }
@@ -230,9 +232,10 @@ void visit(int u) {
 
 	visited++;
 
-	push(&L, u, 1);
+	push(&L, u, True);
+
 	for (i=0; i<getNumAdjs(u); i++) { /*each v in Adj[u]*/
-		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList > 0) {/*(d[v] = inf || v in L)*/
+		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList == True) {/*(d[v] = inf || v in L)*/
 			/* Ignora vertices de SCCs ja identificados*/
 			if (graph1.v[getAdjs(u)[i]].d == inf) {
 				visit(getAdjs(u)[i]);
@@ -244,21 +247,20 @@ void visit(int u) {
 		smallest = u;
 		graph1.v[u].numSCC = numComp;
 		do {
-			v = pop(&L, 1);
+			v = pop(&L, True);
 			if (v < smallest)
 				smallest = v;
 			graph1.v[v].numSCC = numComp;
 			/*Vertices retirados definem SCC*/
 		} while(v != u); /*until u = v*/
-		push(&SCC, smallest, 0);
+
+		push(&SCC, smallest, False);
 		numComp++; 
 	}
 }
 
 void tarjan() {
 	int i;
-	for (i=0; i<getNumVer(); i++) /*each vertex u in V[G]*/
-		graph1.v[i].d = inf;      /*inf = -1 para simplificar*/
 	for (i=0; i<getNumVer(); i++) /*each vertex u in V[G]*/
 		if (graph1.v[i].d == inf)
 			visit(i);
@@ -268,37 +270,55 @@ void printAdjComp(int* adj) {
 
 	int N = adj[1];
 	int i;
-	int in= 0;
+	int in = 0;
 	int numLigComp = 0;
 
 	printf("%d\n", numComp);
 
-	int comps[numComp];
+	int *comps;
+	comps = (int*) malloc(numComp*sizeof(int));
+	if (comps == NULL) {
+		printf("ERRO malloc 1 print\n");
+		exit(1);
+	}
+
 	for (i=numComp-1; i>=0; i--) {
-		comps[i] = pop(&SCC, 0);
+		comps[i] = pop(&SCC, False);
 	}
 
  	for (i=2; i<(2*N)+2; i+=2) {
-    	if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low)
+    	if (graph1.v[adj[i]].numSCC != graph1.v[adj[i+1]].numSCC)
       		numLigComp++;
   	}
 
 	comps2 = (int*) malloc((2*numLigComp)*sizeof(int));
+	if (comps2 == NULL) {
+		printf("ERRO malloc 2 print\n");
+		exit(1);
+	}
 
 	for (i=2; i<(2*N)+2; i+=2) {
-		if (graph1.v[adj[i]-1].low != graph1.v[adj[i+1]-1].low) { 
+		if (graph1.v[adj[i]].numSCC != graph1.v[adj[i+1]].numSCC) { 
     		if (in==0 ||  
-        		comps2[in-2] != comps[graph1.v[adj[i]-1].numSCC]+1 ||  
-        		comps2[in-1] != comps[graph1.v[adj[i+1]-1].numSCC]+1) { 
+        		comps2[in-2] != comps[graph1.v[adj[i]].numSCC] ||  
+        		comps2[in-1] != comps[graph1.v[adj[i+1]].numSCC]) { 
  
-	        	comps2[in] = comps[graph1.v[adj[i]-1].numSCC]+1; 
-    	    	comps2[in+1] = comps[graph1.v[adj[i+1]-1].numSCC]+1; 
+	        	comps2[in] = comps[graph1.v[adj[i]].numSCC]; 
+    	    	comps2[in+1] = comps[graph1.v[adj[i+1]].numSCC]; 
     	    	in+=2;
       		} 
     	} 
 	}
 
-	int ind[in/2];
+	int *ind;
+	ind = (int*) malloc((in/2)*sizeof(int));
+	if (ind == NULL) {
+		printf("ERRO malloc 3 print\n");
+		exit(1);
+	}
+
+
+
 	for (i=0; i<in/2; i++)
 		ind[i]=i;
 
@@ -311,18 +331,18 @@ void printAdjComp(int* adj) {
 
 	for (i=0; i<in/2; i++) {
     	if (i==0 || comps3[in2-2] != comps2[2*ind[i]]
-    		  || comps3[in2-1] != comps2[2*ind[i]+1] ) {
+    		  || comps3[in2-1] != comps2[(2*ind[i])+1] ) {
 
 
     		comps3[in2] = comps2[2*ind[i]];
-    		comps3[in2+1] = comps2[2*ind[i]+1];
+    		comps3[in2+1] = comps2[(2*ind[i])+1];
     		in2+=2;
     	} 
 	}
 
 	printf("%d\n", in2/2);
 	for (i=0; i<in2; i+=2)
-		printf("%d %d\n", comps3[i], comps3[i+1]);
+		printf("%d %d\n", comps3[i]+1, comps3[i+1]+1);
 
 }
 
@@ -332,15 +352,23 @@ int* lerFich() {
 	int N;
 	int i;
 	int *res;
-	scanf("%d", &M);
-	scanf("%d", &N);
+	int err;  /*apenas para silenciar compilador acerca de ignorar o output do scanf*/
+	err = scanf("%d", &M);
+	err = scanf("%d", &N);
 	res = (int*) malloc((2+(2*N))*sizeof(int)); 
+	if (res == NULL) {
+		printf("ERRO malloc 1 lerFich\n");
+		exit(1);
+	}
 	res[0] = M;
 	res[1] = N;
 
 	for (i=2; i<(2*N)+2; i+=2) {
-		scanf("%d %d", &res[i], &res[i+1]);
+		err = scanf("%d %d", &res[i], &res[i+1]);
+		res[i]--;
+		res[i+1]--;
 	}
+	err++; /*tambem para silenciar complilador*/
 	return res; 
 }
  
@@ -349,7 +377,7 @@ int main(int argc, char** argv) {
 	contMerda =0;
 	contMerda2 = 0;
 	arch = 0;
-	int i;
+	/*int i;*/
 	int* adj;
 	L = NULL;
 	SCC = NULL;
@@ -357,11 +385,11 @@ int main(int argc, char** argv) {
 	adj = lerFich();
 	createGraph(adj);
 
-	for (i=0; i<adj[0]; i++)
-		printf("%d\n", graph1.v[i].nTo);
+	/*for (i=0; i<adj[0]; i++)
+		printf("%d\n", graph1.v[i].nTo);*/
 
-	//tarjan();
-	//printAdjComp(adj);
+	tarjan();
+	printAdjComp(adj);
 
 	return 0;
 }
