@@ -149,15 +149,15 @@ int getNumVer() {
 
 
 void merge(int arr[], int l, int m, int r) {
-/*VEIO DE https://www.geeksforgeeks.org/merge-sort/*/
+
     int i, j, k;
     int n1 = m - l + 1;
     int n2 =  r - m;
  
-    /* create temp arrays */
+    /* cria arrays temporarios */
     int L[n1], R[n2];
  
-    /* Copy data to temp arrays L[] and R[] */
+    /* Copia data para arrays temporarios L[] e R[] */
     for (i = 0; i < n1; i++)
         L[i] = arr[l + i];
     for (j = 0; j < n2; j++)
@@ -209,7 +209,7 @@ void visit(int u) {
 
 	push(&L, u, True);
 
-	for (i=0; i<getNumAdjs(u); i++) { /*each v in Adj[u]*/
+	for (i=0; i<getNumAdjs(u); i++) { /*cada v em Adj[u]*/
 		if (graph1.v[getAdjs(u)[i]].d == inf || graph1.v[getAdjs(u)[i]].inList == True) {/*(d[v] = inf || v in L)*/
 			if (graph1.v[getAdjs(u)[i]].d == inf) {
 				visit(getAdjs(u)[i]);
@@ -226,7 +226,7 @@ void visit(int u) {
 				smallest = v;
 			graph1.v[v].numSCC = numComp;
 
-		} while(v != u); /*until u = v*/
+		} while(v != u); /*ate u = v*/
 
 		push(&SCC, smallest, False);
 		numComp++; 
@@ -235,14 +235,14 @@ void visit(int u) {
 
 void tarjan() {
 	int i;
-	for (i=0; i<getNumVer(); i++) /*each vertex u in V[G]*/
+	for (i=0; i<getNumVer(); i++) /*cada vertice u em V[G]*/
 		if (graph1.v[i].d == inf)
 			visit(i);
 }
 
 void printAdjComp(int* adj) {
 
-	int N = adj[1];
+	int M = adj[1];
 	int i;
 	int in = 0;
 	int numLigComp = 0;
@@ -260,7 +260,7 @@ void printAdjComp(int* adj) {
 		comps[i] = pop(&SCC, False);
 	}
 
- 	for (i=2; i<(2*N)+2; i+=2) {
+ 	for (i=2; i<(2*M)+2; i+=2) {
     	if (graph1.v[adj[i]].numSCC != graph1.v[adj[i+1]].numSCC)
       		numLigComp++;
   	}
@@ -271,7 +271,7 @@ void printAdjComp(int* adj) {
 		exit(1);
 	}
 
-	for (i=2; i<(2*N)+2; i+=2) {
+	for (i=2; i<(2*M)+2; i+=2) {
 		if (graph1.v[adj[i]].numSCC != graph1.v[adj[i+1]].numSCC) { 
     		if (in==0 ||  
         		comps2[in-2] != comps[graph1.v[adj[i]].numSCC] ||  
@@ -292,12 +292,11 @@ void printAdjComp(int* adj) {
 	}
 
 
-
-	for (i=0; i<in/2; i++)
+	for (i=0; i<in/2; i++) /*Criamos um vetor de indices , para facilitar a ordenacao */
 		ind[i]=i;
 
 
-	mergeSort(ind, 0, (in/2)-1);
+	mergeSort(ind, 0, (in/2)-1); 
 
 	int comps3[in];
 	int in2 = 0;
@@ -322,22 +321,22 @@ void printAdjComp(int* adj) {
 
 
 int* lerFich() {
-	int M;
 	int N;
+	int M;
 	int i;
 	int *res;
 	int err;  /*apenas para silenciar compilador acerca de ignorar o output do scanf*/
-	err = scanf("%d", &M);
 	err = scanf("%d", &N);
-	res = (int*) malloc((2+(2*N))*sizeof(int)); 
+	err = scanf("%d", &M);
+	res = (int*) malloc((2+(2*M))*sizeof(int)); 
 	if (res == NULL) {
 		printf("ERRO malloc 1 lerFich\n");
 		exit(1);
 	}
-	res[0] = M;
-	res[1] = N;
+	res[0] = N;
+	res[1] = M;
 
-	for (i=2; i<(2*N)+2; i+=2) {
+	for (i=2; i<(2*M)+2; i+=2) {
 		err = scanf("%d %d", &res[i], &res[i+1]);
 		res[i]--;
 		res[i+1]--;
